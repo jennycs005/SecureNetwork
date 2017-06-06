@@ -1,0 +1,2 @@
+B8:27:EB:2F:36:D3
+# use cmd hciconfig to get the mac address on termial

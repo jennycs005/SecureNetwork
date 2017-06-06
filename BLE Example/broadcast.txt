@@ -1,0 +1,30 @@
+sudo hciconfig hci0 up
+sudo hciconfig hci0 leadv 3
+sudo hciconfig hci0 noscan
+
+#sudo hciconfig hci0 piscan
+
+
+# enable BLE advertising 
+sudo hcitool -i hci0 cmd 0x08 0x000A 01
+# set advertising data to Eddystone UUID 
+sudo hcitool -i hci0 cmd 0x08 0x0008 1e 02 01 06 03 03 aa fe 17 16 aa fe 00 -10 00 01 02 03 04 05 06 07 08 09 0a 0b 0e 0f 00 00 00 00
+
+$$ after 1E 02 01 is flag,
+$$ after 1A FF is the data we can use. 
+$$1A is the length of this data, FF is the type of this data
+
+
+sudo hcitool -i hci0 cmd 0x08 0x0008 1E 02 01 88 1A bb 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 22 22 22 22 22 22 22 22 33
+
+sudo hcitool -i hci0 cmd 0x08 0x0008 1E 02 01 88 02 c1 11 03 c2 22 22 02 c3 33
+
+
+下一步，把广播信息改为符合iBeacon协议的内容：
+
+sudo hcitool -i hci0 cmd 0x08 0x0008 1E 02 01 1A 1A FF 4C 00 02 15 63 6F 3F 8F 64 91 4B EE 95 F7 D8 CC 64 A8 63 B5 00 01 00 02 C5
+
+sudo hcitool -i hci0 cmd 0x08 0x0008 1E 02 01 1A 1A FF 4C 00 02 15 63 6F 3F 8F 64 91 4B EE 95 F7 D8 CC 64 A8 63 B5 00 00 00 00 C8
+
+website:
+http://www.wadewegner.com/2014/05/create-an-ibeacon-transmitter-with-the-raspberry-pi/

@@ -1,0 +1,53 @@
+#安装python的包管理工具—pip
+sudo apt-get install python-pip libglib2.0-dev
+#使用pip安装bluepy
+sudo pip install bluepy
+
+
+4. 使用bluepy
+
+本章我们将使用bluepy的Scanner class，扫描正在广播的BLE设备。bluepy的文档中有sample code：
+http://ianharvey.github.io/bluepy-doc/scanner.html
+
+在本地新建一个python脚本（ble_scan.py），将sample code中的代码拷贝进去即可，如下：
+from bluepy.btle import Scanner, DefaultDelegate
+class ScanDelegate(DefaultDelegate): 
+    def __init__(self): 
+        DefaultDelegate.__init__(self)
+    def handleDiscovery(self, dev, isNewDev, isNewData): 
+        if isNewDev: 
+            print "Discovered device", dev.addr 
+        elif isNewData: 
+            print "Received new data from", dev.addr
+scanner = Scanner().withDelegate(ScanDelegate()) 
+devices = scanner.scan(10.0)
+for dev in devices: 
+    print "Device %s (%s), RSSI=%d dB" % (dev.addr, dev.addrType, dev.rssi) 
+    for (adtype, desc, value) in dev.getScanData(): 
+        print "  %s = %s" % (desc, value)
+
+—————
+sudo python ble_scan.py
+
+pi@raspberrypi:~$ sudo python ble_scan.py 
+Discovered device cb:07:c8:52:ce:d6 
+Discovered device 18:dc:56:a6:25:6f 
+Device 18:dc:56:a6:25:6f (public), RSSI=-59 dB 
+  Flags = 06 
+  Complete 16b Services = aafe 
+  16b Service Data = aafe00f0000102030405060708090a0b0e0f000000 
+Device cb:07:c8:52:ce:d6 (random), RSSI=-85 dB 
+  Complete Local Name = My Mambo 
+  Complete 16b Services = e7fe 
+  Manufacturer = 0000cb07c852ced6 
+  128b Service Solicitation = d0002d121e4b0fa4994eceb531f40579 
+  Flags = 06
+对比一下我们在“玩转BLE(1)_Eddystone beacon”中广播的数据（对应三个颜色）：
+1e 02 01 06 03 03 aa fe 17 16 aa fe 00 -10 00 01 02 03 04 05 06 07 08 09 0a 0b 0e 0f 00 00 00 00
+
+
+Device b8:27:eb:2f:36:d3 (public), RSSI=-35 dB
+  Flags = 06
+  Complete 16b Services = aafe
+
+
